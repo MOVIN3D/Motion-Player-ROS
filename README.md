@@ -15,6 +15,7 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 
 ## Prerequisites
 
+- **ROS 2**: Humble (tested)
 - Required ROS 2 packages:
   - `robot_state_publisher`
   - `rviz2`
