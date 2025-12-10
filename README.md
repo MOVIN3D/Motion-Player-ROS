@@ -53,9 +53,7 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 Launch the motion player with a motion files:
 - To display the BVH skeleton alongside the robot
 ```bash
-ros2 launch motion_player display.launch.py \
-    motion_file:=/path/to/your/motion.pkl \
-    bvh_file:=/path/to/your/motion.bvh
+ros2 launch motion_player display.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
 ```
 
 ### Launch Arguments
