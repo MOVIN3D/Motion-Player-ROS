@@ -129,3 +129,9 @@ The URDF and STL mesh files for the Unitree G1 robot are sourced from [Unitree R
 
 - [unitree_ros](https://github.com/unitreerobotics/unitree_ros) - ROS packages with URDF files for Unitree robots
 - [unitree_mujoco](https://github.com/unitreerobotics/unitree_mujoco) - Mujoco simulation for Unitree robots
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**Note:** The robot URDF and mesh files (`urdf/` and `meshes/` directories) are from Unitree Robotics and may be subject to their own licensing terms.
