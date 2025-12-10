@@ -32,7 +32,7 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 1. Clone this repository into your ROS 2 workspace:
    ```bash
    cd ~/ros2_ws/src
-   git clone <repository_url> motion_player_ros
+   git clone https://github.com/MOVIN3D/Motion-Player-ROS
    ```
 
 2. Build the package:
