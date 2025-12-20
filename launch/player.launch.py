@@ -12,7 +12,7 @@ def generate_launch_description():
 
     # Paths to URDF and RViz config
     default_urdf_path = os.path.join(pkg_share, 'urdf', 'g1_custom_collision_29dof.urdf')
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'urdf.rviz')
+    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'robot.rviz')
 
     # Declare launch arguments
     urdf_file_arg = DeclareLaunchArgument(

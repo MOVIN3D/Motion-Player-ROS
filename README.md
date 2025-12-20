@@ -9,9 +9,10 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 ## Features
 
 - **Motion Playback**: Play pre-recorded motion data (`.pkl` format) on a 29-DOF humanoid robot model
+- **Real-time Motion Capture**: Receive live mocap data via OSC and retarget to robot in real-time
 - **BVH Visualization**: Simultaneously display the original BVH motion capture skeleton alongside the robot
 - **Loop Control**: Option to loop the motion playback continuously
-- **RViz Integration**: Full visualization in RViz2 with robot model and BVH markers
+- **RViz Integration**: Full visualization in RViz2 with robot model and skeleton markers
 
 ## Prerequisites
 
@@ -25,6 +26,7 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 - Required pip packages:
   - `numpy`
   - `scipy`
+  - `movin-sdk-python` (for real-time mode)
 
 
 ## Installation
@@ -48,21 +50,45 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 
 ## Usage
 
-### Basic Usage
+### Playback Mode (from file)
 
-Launch the motion player with a motion files:
-- To display the BVH skeleton alongside the robot
+Launch the motion player with pre-recorded motion files:
 ```bash
-ros2 launch motion_player display.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
+ros2 launch motion_player player.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
+```
+
+### Real-time Mode (live mocap)
+
+Launch the real-time motion player to receive live mocap data via OSC:
+```bash
+ros2 launch motion_player realtime.launch.py
+```
+
+With custom parameters:
+```bash
+ros2 launch motion_player realtime.launch.py port:=11235 human_height:=1.80 skeleton_offset_x:=1.5
 ```
 
 ### Launch Arguments
+
+#### player.launch.py (Playback Mode)
 
 | Argument | Default | Description |
 |----------|---------|-------------|
 | `motion_file` | (required) | Path to the motion pickle file (`.pkl`) |
 | `bvh_file` | (required) | Path to the BVH file (`.bvh`)|
 | `loop` | `true` | Whether to loop the motion playback |
+| `urdf_file` | (package default) | Path to custom URDF file |
+| `rviz_config` | (package default) | Path to custom RViz config file |
+
+#### realtime.launch.py (Real-time Mode)
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `port` | `11235` | UDP port to listen for OSC mocap data |
+| `robot_type` | `unitree_g1` | Target robot type (`unitree_g1` or `unitree_g1_with_hands`) |
+| `human_height` | `1.75` | Human height in meters for scaling |
+| `skeleton_offset_x` | `1.0` | X offset to place skeleton beside robot |
 | `urdf_file` | (package default) | Path to custom URDF file |
 | `rviz_config` | (package default) | Path to custom RViz config file |
 
@@ -95,7 +121,8 @@ The BVH skeleton will be displayed as red spheres (joints) and orange cylinders 
 | Topic | Type | Description |
 |-------|------|-------------|
 | `/joint_states` | `sensor_msgs/JointState` | Robot joint states |
-| `/bvh_markers` | `visualization_msgs/MarkerArray` | BVH skeleton visualization |
+| `/bvh_markers` | `visualization_msgs/MarkerArray` | BVH skeleton visualization (playback mode) |
+| `/skeleton_markers` | `visualization_msgs/MarkerArray` | Skeleton visualization (real-time mode) |
 | `/tf` | TF2 | Robot transforms |
 
 ## Project Structure
@@ -111,13 +138,15 @@ motion_player_ros/
 ├── doc/
 │   └── demo.gif               
 ├── launch/
-│   └── display.launch.py      # Main launch file
+│   ├── player.launch.py       # Playback mode launch file
+│   └── realtime.launch.py     # Real-time mode launch file
 ├── meshes/                    # Robot mesh files (STL)*
 ├── rviz/
 │   └── urdf.rviz              
 ├── scripts/
 │   ├── bvh_reader.py          # BVH file parser
-│   └── motion_player.py       # Main motion player node
+│   ├── motion_player.py       # Playback motion player node
+│   └── motion_player2.py      # Real-time motion player node
 └── urdf/
     └── g1_custom_collision_29dof.urdf  # Robot URDF*
 ```
