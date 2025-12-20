@@ -9,9 +9,9 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 ## Features
 
 - **Motion Playback**: Play pre-recorded motion data (`.pkl` format) on a 29-DOF humanoid robot model
-- **Real-time Motion Capture**: Receive live mocap data via OSC and retarget to robot in real-time
-- **BVH Visualization**: Simultaneously display the original BVH motion capture skeleton alongside the robot
-- **Loop Control**: Option to loop the motion playback continuously
+- **Real-time Motion Retargeting**: Receive live mocap data via OSC from [MOVIN TRACIN](https://www.movin3d.com) and retarget to robot in real-time
+- **Real-time Visualization**: Simultaneously visualize both the original motion capture skeleton and retargeted robot motion in RViz
+- **BVH Visualization**: Display the original BVH motion capture skeleton alongside the robot
 - **RViz Integration**: Full visualization in RViz2 with robot model and skeleton markers
 
 ## Prerequisites
@@ -26,7 +26,7 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 - Required pip packages:
   - `numpy`
   - `scipy`
-  - `movin-sdk-python` (for real-time mode)
+  - `movin-sdk-python` (required for BVH loading and real-time mode)
 
 
 ## Installation
@@ -37,13 +37,20 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
    git clone https://github.com/MOVIN3D/Motion-Player-ROS
    ```
 
-2. Build the package:
+2. Install MOVIN SDK Python (required for receiving mocap data and real-time retargeting):
+   ```bash
+   pip install git+https://github.com/MOVIN3D/MOVIN-SDK-Python.git
+   ```
+   
+   For more details about MOVIN SDK, visit: https://github.com/MOVIN3D/MOVIN-SDK-Python
+
+3. Build the package:
    ```bash
    cd ~/ros2_ws
    colcon build --packages-select motion_player
    ```
 
-3. Source the workspace:
+4. Source the workspace:
    ```bash
    source ~/ros2_ws/install/setup.bash
    ```
@@ -57,16 +64,30 @@ Launch the motion player with pre-recorded motion files:
 ros2 launch motion_player player.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
 ```
 
+Or run the node directly:
+```bash
+ros2 run motion_player motion_player --ros-args -p motion_file:=/path/to/your/motion.pkl
+```
+
 ### Real-time Mode (live mocap)
 
-Launch the real-time motion player to receive live mocap data via OSC:
+Launch the real-time motion player to receive live mocap data via OSC from [MOVIN TRACIN](https://www.movin3d.com):
 ```bash
 ros2 launch motion_player realtime.launch.py
 ```
 
+This mode enables:
+- **Real-time retargeting**: Motion capture data is retargeted to the robot model on-the-fly using [MOVIN SDK Python](https://github.com/MOVIN3D/MOVIN-SDK-Python)
+- **Live visualization**: Both the original mocap skeleton and the retargeted robot motion are displayed simultaneously in RViz
+
 With custom parameters:
 ```bash
 ros2 launch motion_player realtime.launch.py port:=11235 human_height:=1.80 skeleton_offset_x:=1.5
+```
+
+Or run the node directly with `--realtime` flag:
+```bash
+ros2 run motion_player motion_player --realtime --ros-args -p port:=11235 -p human_height:=1.80
 ```
 
 ### Launch Arguments
@@ -121,8 +142,7 @@ The BVH skeleton will be displayed as red spheres (joints) and orange cylinders 
 | Topic | Type | Description |
 |-------|------|-------------|
 | `/joint_states` | `sensor_msgs/JointState` | Robot joint states |
-| `/bvh_markers` | `visualization_msgs/MarkerArray` | BVH skeleton visualization (playback mode) |
-| `/skeleton_markers` | `visualization_msgs/MarkerArray` | Skeleton visualization (real-time mode) |
+| `/skeleton_markers` | `visualization_msgs/MarkerArray` | Skeleton visualization (both modes) |
 | `/tf` | TF2 | Robot transforms |
 
 ## Project Structure
@@ -142,16 +162,19 @@ motion_player_ros/
 │   └── realtime.launch.py     # Real-time mode launch file
 ├── meshes/                    # Robot mesh files (STL)*
 ├── rviz/
-│   └── urdf.rviz              
+│   └── robot.rviz             # RViz configuration
 ├── scripts/
-│   ├── bvh_reader.py          # BVH file parser
-│   ├── motion_player.py       # Playback motion player node
-│   └── motion_player2.py      # Real-time motion player node
+│   └── motion_player.py       # Unified motion player node (supports --realtime flag)
 └── urdf/
     └── g1_custom_collision_29dof.urdf  # Robot URDF*
 ```
 
 ## Acknowledgments
+
+This project uses:
+
+- **[MOVIN SDK Python](https://github.com/MOVIN3D/MOVIN-SDK-Python)** - Motion retargeting SDK for real-time mocap to robot conversion
+- **[MOVIN TRACIN](https://www.movin3d.com)** - Motion capture system for generating mocap data
 
 The URDF and STL mesh files for the Unitree G1 robot are sourced from [Unitree Robotics](https://github.com/unitreerobotics). Please refer to their repositories for the original robot models and licensing information:
 

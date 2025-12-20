@@ -51,11 +51,6 @@ def generate_launch_description():
         description='X offset to place skeleton beside robot'
     )
 
-    offset_to_ground_arg = DeclareLaunchArgument(
-        'offset_to_ground',
-        default_value='true',
-        description='Whether to offset the motion to place lowest foot at ground'
-    )
 
     # Read URDF file content
     with open(default_urdf_path, 'r') as urdf_file:
@@ -72,18 +67,18 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    # Real-time Motion Player node
-    motion_player2_node = Node(
+    # Real-time Motion Player node (using --realtime flag)
+    motion_player_node = Node(
         package='motion_player',
-        executable='motion_player2',
-        name='motion_player2',
+        executable='motion_player',
+        name='motion_player',
         output='screen',
+        arguments=['--realtime'],
         parameters=[{
             'port': LaunchConfiguration('port'),
             'robot_type': LaunchConfiguration('robot_type'),
             'human_height': LaunchConfiguration('human_height'),
             'skeleton_offset_x': LaunchConfiguration('skeleton_offset_x'),
-            'offset_to_ground': LaunchConfiguration('offset_to_ground'),
         }]
     )
 
@@ -103,9 +98,8 @@ def generate_launch_description():
         robot_type_arg,
         human_height_arg,
         skeleton_offset_x_arg,
-        offset_to_ground_arg,
         robot_state_publisher_node,
-        motion_player2_node,
+        motion_player_node,
         rviz_node
     ])
 

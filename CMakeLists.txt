@@ -21,16 +21,6 @@ install(
   RENAME motion_player
 )
 
-install(
-  PROGRAMS scripts/motion_player2.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME motion_player2
-)
-
-install(
-  PROGRAMS scripts/bvh_reader.py
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
