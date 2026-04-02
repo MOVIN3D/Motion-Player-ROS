@@ -1,6 +1,6 @@
 # Motion Player
 
-A ROS 2 package for playing back motion capture data on a humanoid robot (Unitree G1) with simultaneous BVH skeleton visualization in RViz.
+A ROS 2 package for streaming live motion capture data from [MOVIN TRACIN](https://www.movin3d.com) via OSC and retargeting it onto a humanoid robot (Unitree G1) in real-time. Also supports offline playback of pre-recorded motions with side-by-side BVH skeleton visualization in RViz.
 
 ## Demo
 
@@ -8,9 +8,9 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 
 ## Features
 
-- **Motion Playback**: Play pre-recorded motion data (`.pkl` format) on a 29-DOF humanoid robot model
 - **Real-time Motion Retargeting**: Receive live mocap data via OSC from [MOVIN TRACIN](https://www.movin3d.com) and retarget to robot in real-time
 - **Real-time Visualization**: Simultaneously visualize both the original motion capture skeleton and retargeted robot motion in RViz
+- **Motion Playback**: Play pre-recorded motion data (`.pkl` format) on a 29-DOF humanoid robot model
 - **BVH Visualization**: Display the original BVH motion capture skeleton alongside the robot
 - **RViz Integration**: Full visualization in RViz2 with robot model and skeleton markers
 
@@ -57,18 +57,6 @@ A ROS 2 package for playing back motion capture data on a humanoid robot (Unitre
 
 ## Usage
 
-### Playback Mode (from file)
-
-Launch the motion player with pre-recorded motion files:
-```bash
-ros2 launch motion_player player.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
-```
-
-Or run the node directly:
-```bash
-ros2 run motion_player motion_player --ros-args -p motion_file:=/path/to/your/motion.pkl
-```
-
 ### Real-time Mode (live mocap)
 
 Launch the real-time motion player to receive live mocap data via OSC from [MOVIN TRACIN](https://www.movin3d.com):
@@ -90,17 +78,19 @@ Or run the node directly with `--realtime` flag:
 ros2 run motion_player motion_player --realtime --ros-args -p port:=11235 -p human_height:=1.80
 ```
 
+### Playback Mode (from file)
+
+Launch the motion player with pre-recorded motion files:
+```bash
+ros2 launch motion_player player.launch.py motion_file:=/path/to/your/motion.pkl bvh_file:=/path/to/your/motion.bvh
+```
+
+Or run the node directly:
+```bash
+ros2 run motion_player motion_player --ros-args -p motion_file:=/path/to/your/motion.pkl
+```
+
 ### Launch Arguments
-
-#### player.launch.py (Playback Mode)
-
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `motion_file` | (required) | Path to the motion pickle file (`.pkl`) |
-| `bvh_file` | (required) | Path to the BVH file (`.bvh`)|
-| `loop` | `true` | Whether to loop the motion playback |
-| `urdf_file` | (package default) | Path to custom URDF file |
-| `rviz_config` | (package default) | Path to custom RViz config file |
 
 #### realtime.launch.py (Real-time Mode)
 
@@ -110,6 +100,16 @@ ros2 run motion_player motion_player --realtime --ros-args -p port:=11235 -p hum
 | `robot_type` | `unitree_g1` | Target robot type (`unitree_g1` or `unitree_g1_with_hands`) |
 | `human_height` | `1.75` | Human height in meters for scaling |
 | `skeleton_offset_x` | `1.0` | X offset to place skeleton beside robot |
+| `urdf_file` | (package default) | Path to custom URDF file |
+| `rviz_config` | (package default) | Path to custom RViz config file |
+
+#### player.launch.py (Playback Mode)
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `motion_file` | (required) | Path to the motion pickle file (`.pkl`) |
+| `bvh_file` | (optional) | Path to the BVH file (`.bvh`). Auto-detected from `motion_file` path if not specified. |
+| `loop` | `true` | Whether to loop the motion playback |
 | `urdf_file` | (package default) | Path to custom URDF file |
 | `rviz_config` | (package default) | Path to custom RViz config file |
 
@@ -148,7 +148,7 @@ The BVH skeleton will be displayed as red spheres (joints) and orange cylinders 
 ## Project Structure
 
 ```
-motion_player_ros/
+Motion-Player-ROS/
 ├── CMakeLists.txt
 ├── package.xml
 ├── README.md
