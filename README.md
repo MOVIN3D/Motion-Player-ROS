@@ -1,3 +1,11 @@
+> **This repository is superseded by [MOVIN-ROS-Plugin](https://github.com/MOVIN3D/MOVIN-ROS-Plugin).**
+> The project's purpose has been corrected to *receive and record real-time motion capture from
+> MOVIN Studio in ROS 2*, with Unitree G1 retargeting and RViz visualization as optional features,
+> and it has been rebuilt on the current [MOVIN SDK Python](https://github.com/MOVIN3D/MOVIN-SDK-Python)
+> (whose refactor removed `load_bvh_file` and changed the `Retargeter` default skeleton preset, so the
+> node in this repository no longer runs against it). The BVH / retargeted-`.pkl` playback mode is not
+> carried over. This repository is kept for reference only.
+
 # Motion Player
 
 A ROS 2 package for streaming live motion capture data from [MOVIN TRACIN](https://www.movin3d.com) via OSC and retargeting it onto a humanoid robot (Unitree G1) in real-time. Also supports offline playback of pre-recorded motions with side-by-side BVH skeleton visualization in RViz.
